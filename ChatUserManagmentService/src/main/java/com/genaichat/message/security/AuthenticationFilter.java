@@ -73,9 +73,9 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 		String token = Jwts.builder()
 				.claim("scope", auth.getAuthorities())
 				.setSubject(userDetails.getUserId())
-				.setExpiration(
+				.expiration(
 						Date.from(now.plusMillis(Long.parseLong(environment.getProperty("token.expiration_time")))))
-				.setIssuedAt(Date.from(now)).signWith(secretKey, SignatureAlgorithm.HS512).compact();
+				.issuedAt(Date.from(now)).signWith(secretKey, SignatureAlgorithm.HS512).compact();
 
 		res.addHeader("Access-Token", token);
 		res.addHeader("Access-Control-Expose-Headers", "Access-Token, Uid");

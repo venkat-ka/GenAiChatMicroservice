@@ -3,3 +3,7 @@ Gen Ai
 Kafka Commands
 
 kafka-topics.sh --list --bootstrap-server localhost:9094
+
+
+2024-11-09 08:41:41,513] ERROR Cannot invoke "java.nio.channels.ServerSocketChannel.close()" because the return value of "kafka.network.Acceptor.serverChannel()" is null (kafka.network.DataPlaneAcceptor)
+kafka-1-1  | java.lang.NullPointerException: Cannot invoke "java.nio.channels.ServerSocketChannel.close()" because the return value of "kafka.network.Acceptor.serverChannel()" is null

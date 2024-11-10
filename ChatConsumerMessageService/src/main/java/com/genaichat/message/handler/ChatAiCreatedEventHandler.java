@@ -49,7 +49,7 @@ public class ChatAiCreatedEventHandler {
 		if(existRcrd != null) {
 			LOGGER.info("Found a duplicate message Id : {}" + existRcrd.getMessageId());
 		}
-		String requestUrl = "http://localhost:8082/response/200";
+		String requestUrl = "http://localhost:8087/response/200";
 
 		try {
 			ResponseEntity<String> response = restTemplate.exchange(requestUrl, HttpMethod.GET, null, String.class);
