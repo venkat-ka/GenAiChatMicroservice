@@ -67,6 +67,21 @@ public class UsersController {
 
 		return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
 	}
+	
+	@PostMapping(value="/addUser", consumes = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE }, produces = {
+			MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
+	public ResponseEntity<CreateUserResponseModel> addUser(@RequestBody CreateUserRequestModel userDetails) {
+
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
+		UserDto userDto = modelMapper.map(userDetails, UserDto.class);
+
+		UserDto createdUser = usersService.createUser(userDto);
+
+		CreateUserResponseModel returnValue = modelMapper.map(createdUser, CreateUserResponseModel.class);
+
+		return ResponseEntity.status(HttpStatus.CREATED).body(returnValue);
+	}
 
 	@GetMapping(value = "/{userId}", produces = { MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE })
 	@PreAuthorize("hasRole('ADMIN') or principal == #userId")

@@ -58,4 +58,10 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 		return chatId;
 	}
 
+	@Override
+	public String messageByUserId(String message) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

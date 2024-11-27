@@ -3,6 +3,7 @@ package com.genaichat.message.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -57,7 +58,9 @@ public class WebSecurity {
 			new WebExpressionAuthorizationManager("hasIpAddress('"+environment.getProperty("gateway.ip")+"')"))
 	        //.permitAll()
 	        //.requestMatchers(new AntPathRequestMatcher("/users/status/check")).permitAll())
-	        .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll())
+	        .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
+	        .requestMatchers(HttpMethod.POST, "/users").permitAll())
+	        
 	        
 	        .addFilter(new AuthorizationFilter(authenticationManager, environment))
 	        .addFilter(authenticationFilter)

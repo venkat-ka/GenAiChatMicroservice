@@ -46,6 +46,10 @@ public class InitialUsersSetup {
 		
 		createRole(Roles.ROLE_USER.name(), Arrays.asList(readAuthority, writeAuthority));
 		RoleEntity roleAdmin = createRole(Roles.ROLE_ADMIN.name(), Arrays.asList(readAuthority, writeAuthority, deleteAuthority));
+
+		
+		RoleEntity rcAdmin = createRole(Roles.ROLE_USER.name(), Arrays.asList(readAuthority, writeAuthority, deleteAuthority));
+		
 		
 		if(roleAdmin == null) return;
 		
@@ -59,6 +63,19 @@ public class InitialUsersSetup {
 		
 		UserEntity storedAdminUser = usersRepository.findByEmail("admin@test.com").orElse(usersRepository.save(adminUser));
 		
+		UserEntity rcUser = new UserEntity();
+		rcUser.setFirstName("rciverVenkat");
+		rcUser.setLastName("rckrish");
+		rcUser.setEmail("rcvr@test.com");
+		rcUser.setUserId(UUID.randomUUID().toString());
+		rcUser.setEncryptedPassword(bCryptPasswordEncoder.encode("12345678"));
+		rcUser.setRoles(Arrays.asList(rcAdmin));
+		
+		/* Reciever user */
+		
+		UserEntity storedRecieverUser = usersRepository.findByEmail("rcvr@test.com").orElse(usersRepository.save(rcUser));
+		
+		/* End */
 //		if(storedAdminUser.get() == null) {
 //			usersRepository.save(adminUser);
 //		}
