@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from 'react'
 import useGetUserList from '../service/AuthService.ts'
 import AuthContext from '../ContextData/AuthContext.ts';
 
-import { ReadUserMessage } from '../Component';
 import { useNavigate } from 'react-router-dom';
 import HeaderComponent from './Header/HeaderComponents.js';
 
@@ -51,6 +50,7 @@ function UserList() {
     }
 
     const useerlist = () => userList && userList.map((uDt, index) => {
+        // debugger
         return uDt.userId != localStorage.getItem('uid') &&
             <div key={index} className='userdtls'>
                 <div className='fl mb15px b'>{uDt.firstName}</div>

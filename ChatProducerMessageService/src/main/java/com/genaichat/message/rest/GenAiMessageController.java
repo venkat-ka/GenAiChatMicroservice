@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.Date;
+import java.util.List;
 
+import com.genaichat.message.io.PreparedMessage;
 import com.genaichat.message.service.ChatMessageService;
 
 @RestController
@@ -81,5 +83,15 @@ public class GenAiMessageController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(chatId);
 	}
 	
+	@PostMapping("/readmessage")
+	public List<PreparedMessage> readMessage(@RequestBody CreateMessageRestModel readMesage) {
+		try {
+			return chatMessageService.listOfMessage(readMesage);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 	
 }

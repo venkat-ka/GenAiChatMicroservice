@@ -42,16 +42,25 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
 	}
 	
 	public static class Config {
-		private List<String> authorities = Arrays.asList("DELETE","READ","ROLE_ADMIN","WRITE");
+		private List<String> adminAuthorities = Arrays.asList("DELETE","READ","ROLE_ADMIN", "WRITE");
+		private List<String> userAuthorities = Arrays.asList("DELETE","READ","ROLE_USER", "WRITE");
 //		private String role;
 //		private String authority;
 
-		public List<String> getAuthorities() {
-			return authorities;
+		public List<String> getAdminAuthorities() {
+			return adminAuthorities;
 		}
 
-		public void setAuthorities(String authorities) {
-			this.authorities = Arrays.asList(authorities.split(" "));
+		public void setAdminAuthorities(String authorities) {
+			this.adminAuthorities = Arrays.asList(authorities.split(" "));
+		}
+		
+		public List<String> getUserAuthorities() {
+			return userAuthorities;
+		}
+
+		public void setUserAuthorities(String authorities) {
+			this.userAuthorities = Arrays.asList(authorities.split(" "));
 		}
 
 //		private String getRole() {
@@ -97,10 +106,13 @@ public class AuthorizationHeaderFilter extends AbstractGatewayFilterFactory<Auth
 			
 			List<String> authorities = getAuthorities(jwt);
 			
-	        boolean hasRequiredAuthority = authorities.stream()
-	        		.anyMatch(authority->config.getAuthorities().contains(authority));
+	        boolean hasRequiredAdminAuthority = authorities.stream()
+	        		.anyMatch(authority->config.getAdminAuthorities().contains(authority));
 	        
-	        if(!hasRequiredAuthority) 
+	        boolean hasRequiredUserAuthority = authorities.stream()
+	        		.anyMatch(authority->config.getUserAuthorities().contains(authority));
+	        
+	        if(!hasRequiredAdminAuthority && !hasRequiredUserAuthority) 
 	        	return onError(exchange,"User is not authorized to perform this operation", HttpStatus.FORBIDDEN);
 	        
 //			if(!isJwtValid(jwt)) {

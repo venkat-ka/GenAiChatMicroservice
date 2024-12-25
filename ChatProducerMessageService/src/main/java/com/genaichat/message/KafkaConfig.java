@@ -4,14 +4,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.kafka.clients.admin.NewTopic;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringDeserializer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.kafka.config.TopicBuilder;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
+
+import com.genaichat.chatevent.ChatAiCreatedEvent;
 
 
 
@@ -44,6 +53,9 @@ public class KafkaConfig {
 	
 	@Value("${spring.kafka.producer.properties.max.in.flight.request.per.connection}")
 	private String inflightRequest;
+	
+	@Autowired
+	Environment environment;
 	
 	Map<String, Object> productConfig(){
 		Map<String, Object> config = new HashMap<>();
@@ -78,5 +90,31 @@ public class KafkaConfig {
 				.replicas(3)
 				.configs(Map.of("min.insync.replicas","2"))
 				.build();
+	}
+	
+	@Bean(name="conFact")
+	ConsumerFactory<String, ChatAiCreatedEvent> consumerFactory() {
+
+	    Map<String, Object> configProps = new HashMap<>();
+	    configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092,127.0.0.1:9094");
+	    configProps.put(JsonDeserializer.TRUSTED_PACKAGES,
+				environment.getProperty("spring.kafka.consumer.properties.spring.json.trusted.packages"));
+	    configProps.put(ConsumerConfig.GROUP_ID_CONFIG, "genchat-created-events");
+	    configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+	    configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+	    configProps.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+	    /* retrieve all message config */
+//	    configProps.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, 
+//				"read_committed");
+//	    configProps.put("max.poll.interval.ms", "300000");
+//	    
+	    return new DefaultKafkaConsumerFactory<>(configProps);
+	  }
+	
+	@Bean(name="kafkaConsumer")
+	KafkaTemplate<String, ChatAiCreatedEvent> kafkaCTemplate(){
+		KafkaTemplate<String, ChatAiCreatedEvent> kfkaTemp = new KafkaTemplate<String, ChatAiCreatedEvent>(producerFactory());
+		kfkaTemp.setConsumerFactory(consumerFactory());
+		return kfkaTemp;
 	}
 }

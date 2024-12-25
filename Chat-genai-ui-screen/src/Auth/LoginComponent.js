@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { getUserLogin } from '../service/AuthService.ts'
 import AuthContext, { IAuthRes } from '../ContextData/AuthContext.ts';
 import { Navigate, useNavigate } from "react-router-dom";
@@ -7,6 +7,8 @@ function LoginComponent() {
     const { getUserList } = useGetUserList();
     const cdd = useContext(AuthContext);
     const { isLoggedIn, getLoggInDetails } = useContext(AuthContext);
+    const [email, setEmail] = useState();
+    const [password, setPassword] = useState();
     const nav = useNavigate();
 
     const storeProfileData = (usid) => {
@@ -22,7 +24,7 @@ function LoginComponent() {
     }
 
     const handleSignIn = () => {
-        let reqData = { "email": "admin@test.com", "password": "12345678" }
+        let reqData = { "email": email, "password": password }
         const getRes = getUserLogin('/users-ws/users/login', reqData)
             .then((data) => {
 
@@ -49,8 +51,22 @@ function LoginComponent() {
     const loginForm = () => {
         return <>
             <div className='userdtls'>
-                <div className='fl mb15px'>Email</div><div className='fr mb15px b'><input type="text" name="eml" onChange={(event) => { console.log(event) }} /></div>
-                <div className='fl mb15px'>Password</div><div className='fr mb15px b'><input type="password" name="psw" onChange={(event) => { console.log(event) }} /></div>
+                {/* <span> Login details
+
+                    email
+                    :
+                    "admin@test.com"
+                    password
+                    :
+                    "12345678"
+                </span>
+
+                <span> Reciver login
+                    rcvr@test.com
+                    12345678
+                </span> */}
+                <div className='fl mb15px'>Email</div><div className='fr mb15px b'><input type="text" name="eml" onChange={(event) => { setEmail(event.target.value) }} /></div>
+                <div className='fl mb15px'>Password</div><div className='fr mb15px b'><input type="password" name="psw" onChange={(event) => { setPassword(event.target.value) }} /></div>
                 <div className="clr"></div>
             </div>
             <div className="button">

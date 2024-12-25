@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  mysql:
+    image: mysql:8.0.27
+    container_name: mysql-8.0.27
+    restart: always                       # always restart
+    environment:
+      MYSQL_DATABASE: "chatgenai"              # name of database
+      MYSQL_USER: "genai"                # sample is the name of user
+      MYSQL_PASSWORD: "genai"          # password for sample user
+      MYSQL_ROOT_PASSWORD: "root"     # password for root user
+    ports:
+      - "3306:3306"                       # host port 3306 is mapper to docker port 3306
+    expose:
+      - "3306"
+    volumes:
+      - mysqldb:/var/lib/mysql
+    networks:
+      - db-network  
+volumes:
+  mysqldb:   
+
+networks:
+  db-network:

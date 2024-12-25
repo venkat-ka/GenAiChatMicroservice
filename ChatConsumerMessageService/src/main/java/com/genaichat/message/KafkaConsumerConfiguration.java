@@ -5,10 +5,10 @@ import java.util.Map;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.Serializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -25,6 +25,9 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.util.backoff.FixedBackOff;
 
+import org.springframework.boot.autoconfigure.web.ServerProperties;
+
+
 import com.genaichat.message.error.NotRetrayableException;
 import com.genaichat.message.error.RetryableException;
 
@@ -37,6 +40,7 @@ public class KafkaConsumerConfiguration {
 	@Autowired
 	private ServerProperties serverprop;
 
+	
 	@Bean
 	ConsumerFactory<String, Object> consumerFactory() {
 		System.out.println(serverprop.getPort()+ " <== >");
@@ -49,7 +53,9 @@ public class KafkaConsumerConfiguration {
 		config.put(JsonDeserializer.TRUSTED_PACKAGES,
 				environment.getProperty("spring.kafka.consumer.properties.spring.json.trusted.packages"));
 		config.put(ConsumerConfig.GROUP_ID_CONFIG, environment.getProperty("consumer.group-id"));
-
+		config.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, 
+				environment.getProperty("spring.kafka.consumer.isolation-level", "READ_COMMITTED").toLowerCase());
+		config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
 		return new DefaultKafkaConsumerFactory<>(config);
 	}
 

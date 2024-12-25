@@ -45,7 +45,8 @@ public class ChatApiGatewayServiceApplication {
 			@Override
 			public void addCorsMappings(CorsRegistry reg) {
 				reg.addMapping("/**").allowedOrigins("*");
-				
+				//reg.addMapping("/kafka-prod/chat/ws-chat/**").allowedOriginPatterns("*");
+				//reg.addMapping("/kafka-prod/chat/ws-chat/**").allowCredentials(true);
 			}
 		};
 	}

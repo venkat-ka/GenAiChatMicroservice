@@ -1,9 +1,11 @@
 package com.genaichat.message.io;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
-@Repository
+import org.springframework.data.jpa.repository.JpaRepository;
+
 public interface ProcessedEventRepository extends JpaRepository<ProcessedEventEntity, Long> {
 	ProcessedEventEntity findByMessageId(String msgId);
+	List<ProcessedEventEntity> findByRecieverIdInOrUserIdIn(List<String> rcvrId, List<String> userId);
+	List<ProcessedEventEntity> findByRecieverIdAndUserId(String rcvrId, String userId);
 }

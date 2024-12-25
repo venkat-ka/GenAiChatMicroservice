@@ -3,7 +3,7 @@ import UserDetailComponent from './UserDetailComponent.jsx';
 import LoginComponent from '../Auth/LoginComponent.js';
 import HeaderComponent from './Header/HeaderComponents.js';
 import AuthContext from '../ContextData/AuthContext.ts';
-import UserList from './UserList.jsx';
+
 import { Navigate, useNavigate } from 'react-router-dom';
 function UserManagment() {
     const nav = useNavigate();
@@ -30,7 +30,7 @@ function UserManagment() {
                     </div>
                     <div className="chatBox">
 
-                        <div className="login-box">
+                        <div className="login-box pd10">
                             {(!isLoggedIn?.isLoggedIn || !isLoggedIn?.isLoggedIn) && tab == 0 && <LoginComponent />}
                         </div>
                         <div className='create-account-box'>

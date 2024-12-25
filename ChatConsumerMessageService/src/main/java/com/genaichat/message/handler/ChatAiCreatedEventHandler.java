@@ -2,6 +2,7 @@ package com.genaichat.message.handler;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -11,25 +12,32 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import com.genaichat.message.ChatAiCreatedEvent;
+import com.genaichat.chatevent.ChatAiCreatedEvent;
 import com.genaichat.message.error.NotRetrayableException;
 import com.genaichat.message.error.RetryableException;
 import com.genaichat.message.io.ProcessedEventRepository;
-import com.genaichat.message.io.ProcessesedEventEntity;
 
-import jakarta.transaction.Transactional;
+
+import com.genaichat.message.io.ProcessedEventEntity;
+
 
 @Component
 @KafkaListener(topics = "genchat-created-events-topic")
 public class ChatAiCreatedEventHandler {
-	
+
 	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
 	private RestTemplate restTemplate;
+	
+	@Autowired
+    SimpMessagingTemplate template;
 
 	private ProcessedEventRepository processEventRepository;
 
@@ -37,18 +45,22 @@ public class ChatAiCreatedEventHandler {
 		this.restTemplate = restTemplate;
 		this.processEventRepository = processEventRepository;
 	}
+
+	public void listen(@Payload ChatAiCreatedEvent chatCreatedEvent, @Header("messageId") String messageId,
+			@Header(KafkaHeaders.RECEIVED_KEY) String messageKey) {
+        LOGGER.info("sending via kafka listener..");
+        template.convertAndSend("/topic/group", chatCreatedEvent);
+    }
 	
-	@Transactional
+	@Transactional(propagation = Propagation.NESTED)
 	@KafkaHandler
 	public void handle(@Payload ChatAiCreatedEvent chatCreatedEvent, @Header("messageId") String messageId,
 			@Header(KafkaHeaders.RECEIVED_KEY) String messageKey) {
-		LOGGER.info("Received a new event: " + chatCreatedEvent.getMessage()+ "" + " with ProductId: "
+		LOGGER.info("Received a new event: " + chatCreatedEvent.getMessage() + "" + " with messageId: "
 				+ chatCreatedEvent.getChatId());
 
-		ProcessesedEventEntity existRcrd = processEventRepository.findByMessageId(messageId);
-		if(existRcrd != null) {
-			LOGGER.info("Found a duplicate message Id : {}" + existRcrd.getMessageId());
-		}
+		
+		
 		String requestUrl = "http://localhost:8087/response/200";
 
 		try {
@@ -67,14 +79,33 @@ public class ChatAiCreatedEventHandler {
 			LOGGER.error(ex.getMessage());
 			throw new NotRetrayableException(ex);
 		}
-		
+
 		try {
-			// save unique message id in a database table;
-			processEventRepository.save(new ProcessesedEventEntity(messageId, chatCreatedEvent.getChatId()));	
-		} catch(DataIntegrityViolationException dexp) {
+			// String messageId, String userId, String recieverId, long offSetNo,
+			// Integer partionNo, Long timeStamp
+			// save unique message id in a database table; 
+			ProcessedEventEntity existRcrd = processEventRepository.findByMessageId(messageId);
+			LOGGER.info("ExistRcrd details => {}", existRcrd);
+			
+			LOGGER.info("Sending broadcasting the message started" + existRcrd.getMessageId());
+			template.convertAndSend("/topic/group", chatCreatedEvent);
+			LOGGER.info("Sending broadcasting the message completed" + existRcrd.getMessageId());
+			if (existRcrd != null) {
+				existRcrd.setMessageType("consumed");
+				ProcessedEventEntity nExRcrd = processEventRepository.findById(existRcrd.getId()).get();
+				LOGGER.info("Found a duplicate message Id : {}" + existRcrd.getMessageId());
+				processEventRepository.save(nExRcrd);
+			}else{
+				
+				processEventRepository.save(new ProcessedEventEntity(messageId, chatCreatedEvent.getUserId(),
+						chatCreatedEvent.getRecieverId(), null, null, "consumed", null));
+			}
+			template.convertAndSend("/topic/group", chatCreatedEvent);
+			
+		} catch (DataIntegrityViolationException dexp) {
 			new NotRetrayableException(dexp);
 		}
-		
+
 	}
 
 }

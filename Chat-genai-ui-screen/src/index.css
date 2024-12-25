@@ -18,6 +18,7 @@ code {
   text-align: center;
   width: 600px;
   padding: 3px;
+  display: inline-block;
 }
 
 .fl {
