@@ -21,6 +21,7 @@ import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 
 import com.genaichat.chatevent.ChatAiCreatedEvent;
+import com.genaichat.chatevent.PreparedMessage;
 
 
 
@@ -63,6 +64,7 @@ public class KafkaConfig {
 		config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, keySerializer);
 		config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, valueSerializer);
 		config.put(ProducerConfig.ACKS_CONFIG, acks);
+		
 		//config.put(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, deliveryTimeout);
 		config.put(ProducerConfig.LINGER_MS_CONFIG, linger);
 		config.put(ProducerConfig.REQUEST_TIMEOUT_MS_CONFIG, requestTimeout);
@@ -82,10 +84,31 @@ public class KafkaConfig {
 		return new KafkaTemplate<String, ChatAiCreatedEvent>(producerFactory());
 	}
 	
+	@Bean
+	ProducerFactory<String, PreparedMessage> producerReadFactory(){
+		return new DefaultKafkaProducerFactory<>(productConfig());
+	}
+	
+	@Bean
+	KafkaTemplate<String, PreparedMessage> kafkaReadTemplate(){
+		return new KafkaTemplate<String, PreparedMessage>(producerReadFactory());
+	}
+	
+	
+	
 	
 	@Bean
 	NewTopic createTopic() {
-		return TopicBuilder.name("genchat-created-events-topic")
+		return TopicBuilder.name(environment.getProperty("consumer.create.topic"))
+				.partitions(3)
+				.replicas(3)
+				.configs(Map.of("min.insync.replicas","2"))
+				.build();
+	}
+	
+	@Bean
+	NewTopic readTopic() {
+		return TopicBuilder.name(environment.getProperty("consumer.read.topic"))
 				.partitions(3)
 				.replicas(3)
 				.configs(Map.of("min.insync.replicas","2"))
@@ -96,7 +119,7 @@ public class KafkaConfig {
 	ConsumerFactory<String, ChatAiCreatedEvent> consumerFactory() {
 
 	    Map<String, Object> configProps = new HashMap<>();
-	    configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092,127.0.0.1:9094");
+	    configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, environment.getProperty("spring.kafka.producer.bootstrap-servers"));
 	    configProps.put(JsonDeserializer.TRUSTED_PACKAGES,
 				environment.getProperty("spring.kafka.consumer.properties.spring.json.trusted.packages"));
 	    configProps.put(ConsumerConfig.GROUP_ID_CONFIG, "genchat-created-events");

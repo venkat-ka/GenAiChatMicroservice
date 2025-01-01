@@ -1,12 +1,28 @@
 package com.genaichat.message.rest;
 
 public class CreateMessageRestModel {
+	public String getChatId() {
+		return chatId;
+	}
+	public void setChatId(String chatId) {
+		this.chatId = chatId;
+	}
 	private String userId;
 	private String recieverId;
 	private String message;
+	private String chatId;
 	
 	
 	
+	public CreateMessageRestModel() {
+	}
+	public CreateMessageRestModel(String userId, String recieverId, String message, String chatId) {
+		super();
+		this.userId = userId;
+		this.recieverId = recieverId;
+		this.message = message;
+		this.chatId = chatId;
+	}
 	public CreateMessageRestModel(String userId, String recieverId, String message) {
 		super();
 		this.userId = userId;

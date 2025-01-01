@@ -42,6 +42,9 @@ public class ProcessedEventEntity implements Serializable{
 	private String messageType;
 	
 	@Column(nullable=true)
+	private String chatId;
+	
+	@Column(nullable=true)
 	private Long timeStamp;
 
 	public ProcessedEventEntity(String messageId, String userId, String recieverId, Long offSetNo,
@@ -54,6 +57,19 @@ public class ProcessedEventEntity implements Serializable{
 		this.partionNo = partionNo;
 		this.timeStamp = timeStamp;
 		this.messageType= messageType;
+	}
+	
+	public ProcessedEventEntity(String messageId, String userId, String recieverId, Long offSetNo,
+			Integer partionNo,String messageType, Long timeStamp, String chatId) {
+		super();
+		this.messageId = messageId;
+		this.userId = userId;
+		this.recieverId = recieverId;
+		this.offSetNo = offSetNo;
+		this.partionNo = partionNo;
+		this.timeStamp = timeStamp;
+		this.messageType= messageType;
+		this.chatId = chatId;
 	}
 	
 	public ProcessedEventEntity() {
@@ -114,6 +130,14 @@ public class ProcessedEventEntity implements Serializable{
 
 	public void setMessageType(String messageType) {
 		this.messageType = messageType;
+	}
+
+	public String getChatId() {
+		return chatId;
+	}
+
+	public void setChatId(String chatId) {
+		this.chatId = chatId;
 	}
 
 	public long getId() {

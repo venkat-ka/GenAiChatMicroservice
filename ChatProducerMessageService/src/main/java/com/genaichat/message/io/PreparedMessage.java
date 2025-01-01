@@ -12,4 +12,5 @@ public class PreparedMessage {
 	private String message;
 	private String userId;
 	private String recieverId;
+	private String chatId;
 }

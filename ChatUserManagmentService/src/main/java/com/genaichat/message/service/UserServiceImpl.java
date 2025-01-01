@@ -1,6 +1,7 @@
 package com.genaichat.message.service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -8,6 +9,7 @@ import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -17,10 +19,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.genaichat.message.data.AuthorityEntity;
+import com.genaichat.message.data.AutorityRepository;
+import com.genaichat.message.data.RoleRepository;
 import com.genaichat.message.data.RoleEntity;
 import com.genaichat.message.data.UserEntity;
 import com.genaichat.message.data.UsersRepository;
+import com.genaichat.message.shared.Roles;
 import com.genaichat.message.shared.UserDto;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class UserServiceImpl implements UsersService{
@@ -28,11 +35,20 @@ public class UserServiceImpl implements UsersService{
 
 	UsersRepository usersRepository;
 	BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	AutorityRepository authorityRepository;
 
 	
-	public UserServiceImpl(UsersRepository usersRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+	RoleRepository roleRepository;
+	
+
+	public UserServiceImpl(UsersRepository usersRepository, BCryptPasswordEncoder bCryptPasswordEncoder,
+			AutorityRepository authorityRepository, RoleRepository roleRepository) {
+		super();
 		this.usersRepository = usersRepository;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+		this.authorityRepository = authorityRepository;
+		this.roleRepository = roleRepository;
 	}
 
 	@Override
@@ -72,7 +88,16 @@ public class UserServiceImpl implements UsersService{
 		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
 		UserEntity userEntity = modelMapper.map(userDetails, UserEntity.class);
+		
+		AuthorityEntity readAuthority = createAuthority("READ");
+		AuthorityEntity writeAuthority = createAuthority("WRITE");
+		AuthorityEntity deleteAuthority = createAuthority("DELETE");
 
+		RoleEntity rcAdmin = createRole(Roles.ROLE_USER.name(), Arrays.asList(readAuthority, writeAuthority, deleteAuthority));
+
+		//Arrays.asList(rcAdmin);
+		
+		userEntity.setRoles(Arrays.asList(rcAdmin));
 		usersRepository.save(userEntity);
 
 		UserDto returnValue = modelMapper.map(userEntity, UserDto.class);
@@ -127,6 +152,33 @@ public class UserServiceImpl implements UsersService{
 			userDto.add(mapUserDt);
 		}
 		return userDto;
+	}
+	
+	//@Transactional
+	private AuthorityEntity createAuthority(String name) {
+		
+		AuthorityEntity authority = authorityRepository.findByName(name);
+		
+		if(authority == null) {
+			authority = new AuthorityEntity(name);
+			authorityRepository.save(authority);
+		}
+		
+		return authority;
+	}
+	
+	//@Transactional
+	private RoleEntity createRole(String name, Collection<AuthorityEntity> authorities) {
+		
+		RoleEntity role = roleRepository.findByName(name);
+		
+		if(role == null) {
+			role = new RoleEntity(name, authorities);
+			roleRepository.save(role);
+		}
+		
+		return role;
+		
 	}
 	
 }

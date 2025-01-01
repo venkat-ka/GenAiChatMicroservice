@@ -58,6 +58,25 @@ public class KafkaConsumerConfiguration {
 		config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
 		return new DefaultKafkaConsumerFactory<>(config);
 	}
+	
+	
+	@Bean
+	ConsumerFactory<String, Object> consumerReadFactory() {
+		System.out.println(serverprop.getPort()+ " <== >");
+		Map<String, Object> config = new HashMap<>();
+		config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,
+				environment.getProperty("spring.kafka.consumer.bootstrap-servers"));
+		config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+		config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ErrorHandlingDeserializer.class);
+		config.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, JsonDeserializer.class);
+		config.put(JsonDeserializer.TRUSTED_PACKAGES,
+				environment.getProperty("spring.kafka.consumer.properties.spring.json.trusted.packages"));
+		config.put(ConsumerConfig.GROUP_ID_CONFIG, environment.getProperty("consumer.read.group-id"));
+		config.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, 
+				environment.getProperty("spring.kafka.consumer.isolation-level", "READ_COMMITTED").toLowerCase());
+		config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "latest");
+		return new DefaultKafkaConsumerFactory<>(config);
+	}
 
 	@Bean
 	ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory(
@@ -70,6 +89,22 @@ public class KafkaConsumerConfiguration {
 
 		ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(consumerFactory);
+		factory.setCommonErrorHandler(errorHandler);
+		
+		return factory;
+	}
+	
+	@Bean
+	ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerReadContainerFactory(
+			ConsumerFactory<String, Object> consumerReadFactory, KafkaTemplate<String, Object> kafkaTemplate) {
+		
+		DefaultErrorHandler errorHandler = new DefaultErrorHandler(new DeadLetterPublishingRecoverer(kafkaTemplate),
+				new FixedBackOff(5000,3));
+		errorHandler.addNotRetryableExceptions(NotRetrayableException.class);
+		errorHandler.addRetryableExceptions(RetryableException.class);
+
+		ConcurrentKafkaListenerContainerFactory<String, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
+		factory.setConsumerFactory(consumerReadFactory);
 		factory.setCommonErrorHandler(errorHandler);
 		
 		return factory;

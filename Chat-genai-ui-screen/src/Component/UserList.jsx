@@ -50,7 +50,6 @@ function UserList() {
     }
 
     const useerlist = () => userList && userList.map((uDt, index) => {
-        // debugger
         return uDt.userId != localStorage.getItem('uid') &&
             <div key={index} className='userdtls'>
                 <div className='fl mb15px b'>{uDt.firstName}</div>

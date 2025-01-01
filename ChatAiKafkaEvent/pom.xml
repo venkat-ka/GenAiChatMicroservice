@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.genaichat</groupId>
 	<artifactId>ChatAiKafkaEvent</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2-SNAPSHOT</version>
 	<name>ChatAiKafkaEvent</name>
 	<description>Chat Topic Event dependent servicemessage will send message to consume</description>
 	<url/>

@@ -96,8 +96,7 @@ const UserDetailComponent = () => {
         }
     }
     const addUser = () => {
-        return <div className='w100, clearBith'>
-            <button type="button" className="btn pd10 mr15px" onClick={() => saveUser()}>Create User </button></div>
+        return <button type="button" className="btn pd10 mr15px" onClick={() => saveUser()}>Create User </button>
     }
     return <>
         {createUser()}

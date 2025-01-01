@@ -17,27 +17,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 	private Environment env;
 	 
     @Override
-    public void registerStompEndpoints(StompEndpointRegistry registry) {
-    	Long l = 3334L;
-    	//registry.addEndpoint("/chat/ws-chat/info").setAllowedOrigins("http://localhost:3000").withSockJS();
-    	registry.addEndpoint("/ws-chat").setAllowedOrigins("http://localhost:3000").withSockJS();
-    	
-    	//registry.addEndpoint("/chat/ws-chat").withSockJS();
-    	//registry.addEndpoint("/chat/ws-chat/**").setAllowedOriginPatterns("*").withSockJS();
-
-    	
-    	
-    	// chat client will use this to connect to the server // ws-chat config in react
-		//registry.addEndpoint("/chat/ws-chat").setAllowedOrigins("http://localhost:3000").withSockJS();
-    //Access-Control-Allow-Credentials
-    	//registry.addEndpoint("/chat/ws-chat").setAllowedOrigins("http://localhost:3000").withSockJS();
-    	//registry.addEndpoint("/chat/ws-chat").setAllowedOriginPatterns("/chat/ws-chat/**").withSockJS();
+    public void registerStompEndpoints(StompEndpointRegistry registry) {    	
+    	registry.addEndpoint("/ws-chat").setAllowedOrigins("http://localhost:3000").withSockJS();    	
     }
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
-//    	registry.enableStompBrokerRelay("/queue", "/topic")
-//        .setRelayHost("host.docker.internal");
     registry.setApplicationDestinationPrefixes("/app");
     registry.enableSimpleBroker("/topic/");
     }

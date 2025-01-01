@@ -30,7 +30,7 @@ import com.genaichat.message.io.ProcessedEventEntity;
 
 
 @Component
-@KafkaListener(topics = "genchat-created-events-topic")
+@KafkaListener(topics = "genchat-created-events-topic", groupId = "genchat-created-events")
 public class ChatAiCreatedEventHandler {
 
 	private final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
@@ -49,6 +49,7 @@ public class ChatAiCreatedEventHandler {
 	public void listen(@Payload ChatAiCreatedEvent chatCreatedEvent, @Header("messageId") String messageId,
 			@Header(KafkaHeaders.RECEIVED_KEY) String messageKey) {
         LOGGER.info("sending via kafka listener..");
+        
         template.convertAndSend("/topic/group", chatCreatedEvent);
     }
 	
@@ -59,7 +60,8 @@ public class ChatAiCreatedEventHandler {
 		LOGGER.info("Received a new event: " + chatCreatedEvent.getMessage() + "" + " with messageId: "
 				+ chatCreatedEvent.getChatId());
 
-		
+		LOGGER.info(" with message key: "
+				+ messageKey);
 		
 		String requestUrl = "http://localhost:8087/response/200";
 
@@ -86,21 +88,42 @@ public class ChatAiCreatedEventHandler {
 			// save unique message id in a database table; 
 			ProcessedEventEntity existRcrd = processEventRepository.findByMessageId(messageId);
 			LOGGER.info("ExistRcrd details => {}", existRcrd);
+			ProcessedEventEntity existChrtId = processEventRepository.findByChatId(chatCreatedEvent.getChatId());
 			
-			LOGGER.info("Sending broadcasting the message started" + existRcrd.getMessageId());
-			template.convertAndSend("/topic/group", chatCreatedEvent);
-			LOGGER.info("Sending broadcasting the message completed" + existRcrd.getMessageId());
-			if (existRcrd != null) {
-				existRcrd.setMessageType("consumed");
-				ProcessedEventEntity nExRcrd = processEventRepository.findById(existRcrd.getId()).get();
-				LOGGER.info("Found a duplicate message Id : {}" + existRcrd.getMessageId());
-				processEventRepository.save(nExRcrd);
-			}else{
+			//LOGGER.info("Sending broadcasting the message started" + existRcrd.getMessageId());
+			//template.convertAndSend("/topic/group", chatCreatedEvent);
+			//LOGGER.info("Sending broadcasting the message completed" + existRcrd.getMessageId());
+			if (existRcrd == null && existChrtId == null) {
+				
+				if(existChrtId == null) {
+					chatCreatedEvent.setMessageType("received");
+					chatCreatedEvent.setChatId(chatCreatedEvent.getChatId());
+					template.convertAndSend("/topic/group", chatCreatedEvent);
+				}
 				
 				processEventRepository.save(new ProcessedEventEntity(messageId, chatCreatedEvent.getUserId(),
-						chatCreatedEvent.getRecieverId(), null, null, "consumed", null));
+						chatCreatedEvent.getRecieverId(), null, null, null, null, chatCreatedEvent.getChatId()));
+				
 			}
-			template.convertAndSend("/topic/group", chatCreatedEvent);
+			else if(existChrtId != null && existChrtId.getChatId().equalsIgnoreCase(chatCreatedEvent.getChatId()))
+			{
+				//existRcrd.setMessageType("consumed");
+				
+				ProcessedEventEntity nExRcrd = processEventRepository.findByChatId(existChrtId.getChatId());
+				LOGGER.info("Found a duplicate message Id : {}" + nExRcrd.getMessageId());
+				nExRcrd.setMessageType("consumed");
+				
+				processEventRepository.save(nExRcrd);
+				
+				template.convertAndSend("/topic/group", nExRcrd);
+				
+				
+			}else {
+				
+			}
+			//chatCreatedEvent.setMessageId(messageId);
+			
+			
 			
 		} catch (DataIntegrityViolationException dexp) {
 			new NotRetrayableException(dexp);

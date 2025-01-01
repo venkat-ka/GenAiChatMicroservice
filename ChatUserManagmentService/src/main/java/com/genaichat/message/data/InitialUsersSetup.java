@@ -25,7 +25,7 @@ public class InitialUsersSetup {
 	AutorityRepository authorityRepository;
 	
 	@Autowired
-	ReoleRepository roleRepository;
+	RoleRepository roleRepository;
 	
 	@Autowired
 	BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -61,7 +61,7 @@ public class InitialUsersSetup {
 		adminUser.setEncryptedPassword(bCryptPasswordEncoder.encode("12345678"));
 		adminUser.setRoles(Arrays.asList(roleAdmin));
 		
-		UserEntity storedAdminUser = usersRepository.findByEmail("admin@test.com").orElse(usersRepository.save(adminUser));
+		UserEntity storedAdminUser = usersRepository.findByEmail("admin@test.com").orElseGet(()->usersRepository.save(adminUser));
 		
 		UserEntity rcUser = new UserEntity();
 		rcUser.setFirstName("rciverVenkat");
@@ -73,7 +73,7 @@ public class InitialUsersSetup {
 		
 		/* Reciever user */
 		
-		UserEntity storedRecieverUser = usersRepository.findByEmail("rcvr@test.com").orElse(usersRepository.save(rcUser));
+		UserEntity storedRecieverUser = usersRepository.findByEmail("rcvr@test.com").orElseGet(()->usersRepository.save(rcUser));
 		
 		/* End */
 //		if(storedAdminUser.get() == null) {

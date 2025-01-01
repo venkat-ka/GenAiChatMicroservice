@@ -31,42 +31,14 @@ public class WebSecurity {
 
 	@Bean
     protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
-    	System.out.println(environment.getProperty("gateway.ip"));
+    	
     	// Configure AuthenticationManagerBuilder
     	http.csrf((csrf) -> csrf.disable());
     	http.authorizeHttpRequests((auth)->auth.requestMatchers(new AntPathRequestMatcher("/chat/**"))
     			.access(new WebExpressionAuthorizationManager("hasIpAddress('"+environment.getProperty("gateway.ip")+"')")));
-    	
-    	
-//    	
-//    	http.authorizeHttpRequests((auth)->auth.requestMatchers(HttpMethod.GET, "/actuator/health")
-//    			.access(new WebExpressionAuthorizationManager("hasIpAddress('"+environment.getProperty("gateway.ip")+"')")
-//    					));
-//    	
-//    	http.authorizeHttpRequests((auth)->auth.requestMatchers(HttpMethod.GET, "/actuator/circuitbreakerevents")
-//    			.access(new WebExpressionAuthorizationManager("hasIpAddress('"+environment.getProperty("gateway.ip")+"')")
-//    					));
-    	
-    	//http.authorizeHttpRequests(vl -> vl.requestMatchers(new AntPathRequestMatcher("/apis/**")).permitAll());
 		http.sessionManagement((session) -> session
 		        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-		
-//		
-//        http.csrf((csrf) -> csrf.disable());
-//        //http.formLogin(k->k.disable());
-//  //'"+environment.getProperty("gateway.ip")+"'
-//        http.authorizeHttpRequests((authz) -> authz
-//        .requestMatchers(new AntPathRequestMatcher("/api/**"))
-//        .access(
-//		new WebExpressionAuthorizationManager("hasIpAddress('"+environment.getProperty("gateway.ip")+"')"))
-//        
-//        //.requestMatchers(new AntPathRequestMatcher("/users/status/check")).permitAll())
-//        )
-//        .sessionManagement((session) -> session
-//        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-		
         http.headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.sameOrigin()));
         return http.build();
-
     }
 }

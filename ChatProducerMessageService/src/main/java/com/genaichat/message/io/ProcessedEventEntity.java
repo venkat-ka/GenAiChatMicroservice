@@ -1,6 +1,7 @@
 package com.genaichat.message.io;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,12 +34,17 @@ public class ProcessedEventEntity implements Serializable {
 	@Column(nullable=false)
 	private String recieverId;
 	/* this is key */
+	@Column(nullable=true)
+	private String chatId;
 	
 	@Column(nullable=true)
 	private Long offSetNo;
 	
 	@Column(nullable=true)
 	private Integer partionNo;
+	
+	@Column(nullable=true)
+	private String messageType;
 	
 	@Column(nullable=true)
 	private Long timeStamp;
@@ -56,6 +62,18 @@ public class ProcessedEventEntity implements Serializable {
 		this.offSetNo = offSetNo;
 		this.partionNo = partionNo;
 		this.timeStamp = timeStamp;
+	}
+	
+	public ProcessedEventEntity(String messageId, String userId, String recieverId, Long offSetNo, Integer partionNo,
+			Long timeStamp, String chatId) {
+		super();
+		this.messageId = messageId;
+		this.userId = userId;
+		this.recieverId = recieverId;
+		this.offSetNo = offSetNo;
+		this.partionNo = partionNo;
+		this.timeStamp = timeStamp;
+		this.chatId = chatId;
 	}
 
 	public String getMessageId() {
@@ -104,6 +122,39 @@ public class ProcessedEventEntity implements Serializable {
 
 	public void setTimeStamp(Long timeStamp) {
 		this.timeStamp = timeStamp;
+	}
+
+	public String getMessageType() {
+		return messageType;
+	}
+
+	public String getChatId() {
+		return chatId;
+	}
+
+	public void setChatId(String chatId) {
+		this.chatId = chatId;
+	}
+
+	public void setMessageType(String messageType) {
+		this.messageType = messageType;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(messageId);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProcessedEventEntity other = (ProcessedEventEntity) obj;
+		return Objects.equals(messageId, other.messageId);
 	}
 
 	
