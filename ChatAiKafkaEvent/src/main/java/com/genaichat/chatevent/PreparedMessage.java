@@ -9,6 +9,7 @@ public class PreparedMessage {
 	private String chatId;
 	private String messageType;
 	private String messageId;
+	private Integer partitionId;
 	
 	public String getMessageId() {
 		return messageId;
@@ -39,7 +40,15 @@ public class PreparedMessage {
 		this.chatId = chatId;
 	}
 	
-	public PreparedMessage(Long timeStamp, String message, String userId, String recieverId, String chatId, String messageType) {
+	public Integer getPartitionId() {
+		return partitionId;
+	}
+
+	public void setPartitionId(Integer partitionId) {
+		this.partitionId = partitionId;
+	}
+
+	public PreparedMessage(Long timeStamp, String message, String userId, String recieverId, String chatId, String messageType, Integer partitionId) {
 		super();
 		this.timeStamp = timeStamp;
 		this.message = message;
@@ -47,6 +56,7 @@ public class PreparedMessage {
 		this.recieverId = recieverId;
 		this.chatId = chatId;
 		this.messageType = messageType;
+		this.partitionId = partitionId;
 	}
 	
 	public PreparedMessage(String userId, String recieverId, String chatId, String messageType) {

@@ -11,5 +11,6 @@ public interface ChatMessageService {
 	String messageByUserId(String message)throws Exception;
 	 List<PreparedMessage> listOfMessage(CreateMessageRestModel readMesage)throws Exception;
 	 PreparedMessage consumedTrigger(PreparedMessage readMesage)throws Exception;
+	 String removeTrigger(PreparedMessage readMesage)throws Exception;
 
 }

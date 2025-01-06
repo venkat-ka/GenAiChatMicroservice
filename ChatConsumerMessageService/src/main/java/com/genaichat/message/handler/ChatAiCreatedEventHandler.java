@@ -21,6 +21,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import com.genaichat.chatevent.ChatAiCreatedEvent;
+import com.genaichat.chatevent.ChatAiRemoveMsgEvent;
 import com.genaichat.message.error.NotRetrayableException;
 import com.genaichat.message.error.RetryableException;
 import com.genaichat.message.io.ProcessedEventRepository;
@@ -46,13 +47,23 @@ public class ChatAiCreatedEventHandler {
 		this.processEventRepository = processEventRepository;
 	}
 
+	
 	public void listen(@Payload ChatAiCreatedEvent chatCreatedEvent, @Header("messageId") String messageId,
 			@Header(KafkaHeaders.RECEIVED_KEY) String messageKey) {
         LOGGER.info("sending via kafka listener..");
         
         template.convertAndSend("/topic/group", chatCreatedEvent);
     }
+	@Transactional(propagation = Propagation.NESTED)
+	@KafkaHandler(isDefault = true)
+	public void removeHander(@Payload ChatAiRemoveMsgEvent chatRemoveEvent,@Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
+			@Header(KafkaHeaders.RECEIVED_PARTITION) int partition, @Header("removeId") String messageId) {
 	
+		LOGGER.info("CHecking messageKey remov: " + partition);
+		LOGGER.info("Header remove remov: " + messageId);
+		LOGGER.info("value chatCreatedEvent : " + chatRemoveEvent);
+		
+	}
 	@Transactional(propagation = Propagation.NESTED)
 	@KafkaHandler
 	public void handle(@Payload ChatAiCreatedEvent chatCreatedEvent, @Header("messageId") String messageId,
@@ -111,14 +122,17 @@ public class ChatAiCreatedEventHandler {
 				
 				ProcessedEventEntity nExRcrd = processEventRepository.findByChatId(existChrtId.getChatId());
 				LOGGER.info("Found a duplicate message Id : {}" + nExRcrd.getMessageId());
+				if(chatCreatedEvent == null) {
+					nExRcrd.setMessageType("removed");
+				}else {
+					
+				}
 				nExRcrd.setMessageType("consumed");
 				
 				processEventRepository.save(nExRcrd);
 				
 				template.convertAndSend("/topic/group", nExRcrd);
 				
-				
-			}else {
 				
 			}
 			//chatCreatedEvent.setMessageId(messageId);

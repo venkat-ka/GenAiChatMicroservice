@@ -4,6 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -15,6 +16,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.expression.WebExpressionAuthorizationManager;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import com.genaichat.message.data.UsersRepository;
 import com.genaichat.message.service.UsersService;
 
 
@@ -25,15 +27,29 @@ public class WebSecurity {
 	private Environment environment;
 	private UsersService usersService;
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	private UsersRepository userRepo;
+	private SimpMessagingTemplate simpleMsgTemp;
+	
+	
+//	public WebSecurity(Environment environment, UsersService usersService,
+//			BCryptPasswordEncoder bCryptPasswordEncoder) {
+//		this.environment = environment;
+//		this.usersService = usersService;
+//		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+//	}
 
-	public WebSecurity(Environment environment, UsersService usersService,
-			BCryptPasswordEncoder bCryptPasswordEncoder) {
+	  public WebSecurity(Environment environment, UsersService usersService, BCryptPasswordEncoder bCryptPasswordEncoder,
+			UsersRepository userRepo, SimpMessagingTemplate simpleMsgTemp) {
+		super();
 		this.environment = environment;
 		this.usersService = usersService;
 		this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+		this.userRepo = userRepo;
+		this.simpleMsgTemp = simpleMsgTemp;
 	}
 
-	  @Bean
+
+	@Bean
 	  protected SecurityFilterChain configure(HttpSecurity http) throws Exception {
 	    	System.out.println(environment.getProperty("gateway.ip"));
 	    	// Configure AuthenticationManagerBuilder
@@ -45,15 +61,25 @@ public class WebSecurity {
 	    	
 	    	AuthenticationManager authenticationManager = authenticationManagerBuilder.build();
 	    	
+	    	/* public AuthenticationFilter(UsersService usersService, Environment environment, UsersRepository userRepo,
+			SimpMessagingTemplate template) */
+
 	    	// Create AuthenticationFilter
 	    	AuthenticationFilter authenticationFilter = 
-	    			new AuthenticationFilter(usersService, environment, authenticationManager);
+	    			new AuthenticationFilter(usersService,authenticationManager, environment, userRepo, simpleMsgTemp);
 	    	authenticationFilter.setFilterProcessesUrl(environment.getProperty("login.url.path"));
-	    	
+	    	/*(UsersService usersService, AuthenticationManager authenticationManager, Environment environment, UsersRepository userRepo,
+			SimpMessagingTemplate template)
+*/
 	        http.csrf((csrf) -> csrf.disable());
 	  //'"+environment.getProperty("gateway.ip")+"'
+
+	    	http.authorizeHttpRequests((auth)->auth.requestMatchers(new AntPathRequestMatcher("/ws-chat/**"))
+	    			.access(new WebExpressionAuthorizationManager("hasIpAddress('"+environment.getProperty("gateway.ip")+"')")));
+	    	
 	        http.authorizeHttpRequests((authz) -> authz
 	        .requestMatchers(new AntPathRequestMatcher("/users/**"))
+	        
 	        .access(
 			new WebExpressionAuthorizationManager("hasIpAddress('"+environment.getProperty("gateway.ip")+"')"))
 	        //.permitAll()

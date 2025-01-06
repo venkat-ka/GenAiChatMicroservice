@@ -36,6 +36,8 @@ public class WebSecurity {
     	http.csrf((csrf) -> csrf.disable());
     	http.authorizeHttpRequests((auth)->auth.requestMatchers(new AntPathRequestMatcher("/chat/**"))
     			.access(new WebExpressionAuthorizationManager("hasIpAddress('"+environment.getProperty("gateway.ip")+"')")));
+    	
+    	
 		http.sessionManagement((session) -> session
 		        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.headers((headers) -> headers.frameOptions((frameOptions) -> frameOptions.sameOrigin()));

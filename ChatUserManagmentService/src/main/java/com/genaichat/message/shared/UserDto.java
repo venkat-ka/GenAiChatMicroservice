@@ -14,7 +14,9 @@ public class UserDto implements Serializable {
 	private String password;
 	private String userId;
 	private String encryptedPassword;
-
+	private String loginStatus;
+	private String token;
+	
 	public String getFirstName() {
 		return firstName;
 	}
@@ -58,8 +60,25 @@ public class UserDto implements Serializable {
 	public String getEncryptedPassword() {
 		return encryptedPassword;
 	}
-
+	
 	public void setEncryptedPassword(String encryptedPassword) {
 		this.encryptedPassword = encryptedPassword;
 	}
+
+	public String getLoginStatus() {
+		return loginStatus;
+	}
+
+	public void setLoginStatus(String loginStatus) {
+		this.loginStatus = loginStatus;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+	
 }

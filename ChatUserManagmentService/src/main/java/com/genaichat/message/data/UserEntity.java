@@ -42,11 +42,30 @@ public class UserEntity {
 	@Column(nullable=false, unique=true)	
 	private String encryptedPassword;
 	
+	@Column(nullable=true)	
+	private String loginStatus;
+	
+	@Column(nullable=true, columnDefinition = "TEXT")
+	private String token;
+	
 	@ManyToMany(cascade=CascadeType.PERSIST, fetch=FetchType.EAGER)
 	@JoinTable(name="users_roles", joinColumns=@JoinColumn(name="users_id", referencedColumnName="id"), 
 			inverseJoinColumns=@JoinColumn(name="roles_id", referencedColumnName="id"))
 	Collection<RoleEntity> roles;
 	
+	
+	public String getToken() {
+		return token;
+	}
+	public void setToken(String token) {
+		this.token = token;
+	}
+	public String getLoginStatus() {
+		return loginStatus;
+	}
+	public void setLoginStatus(String loginStatus) {
+		this.loginStatus = loginStatus;
+	}
 	public long getId() {
 		return id;
 	}

@@ -105,4 +105,15 @@ public class GenAiMessageController {
 		return null;
 	}
 	
+	@PostMapping("/remove")
+	public String removeMessage(@RequestBody PreparedMessage removeMsg) {
+		try {
+			return chatMessageService.removeTrigger(removeMsg);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 }

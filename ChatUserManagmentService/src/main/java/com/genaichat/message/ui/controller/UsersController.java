@@ -110,4 +110,13 @@ public class UsersController {
 		List<UserDto> userDto = usersService.getAllUser();
 		return ResponseEntity.status(HttpStatus.OK).body(userDto);
 	}
+	
+	@PostMapping(value = "/signout")
+	public String logout(@RequestBody String userId){
+		String usrLogOutId = usersService.userLogout(userId);
+		
+		return userId;
+	}
+	
+	
 }

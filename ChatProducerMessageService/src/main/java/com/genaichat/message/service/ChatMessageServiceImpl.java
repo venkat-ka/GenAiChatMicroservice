@@ -27,6 +27,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 import com.genaichat.chatevent.ChatAiCreatedEvent;
+import com.genaichat.chatevent.ChatAiRemoveMsgEvent;
 import com.genaichat.chatevent.PreparedMessage;
 import com.genaichat.message.io.ProcessedEventEntity;
 import com.genaichat.message.io.ProcessedEventRepository;
@@ -231,17 +232,26 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 			System.out.println(kk.key());
 			System.out.println("<==>");
 			System.out.println("partition number" + kk.partition());
+			if(kk.value() != null) {
 			System.out.println(kk.value().getMessage());
 			System.out.println("message Type ==>" +kk.value().getMessageType());
 			System.out.println("message id ==>" +kk.value().getMessageId());
+			listOfTitle.add(new PreparedMessage(kk.timestamp(), kk.value().getMessage(), kk.value().getUserId(), kk.value().getRecieverId(), kk.value().getChatId(), kk.value().getMessageType(), kk.partition()));
+
+			}else {
+				//Long timeStamp, String message, String userId, String recieverId, String chatId, String messageType, Integer partitionId
+			listOfTitle.add(new PreparedMessage(kk.timestamp(), null, null, null, null, null, kk.partition()));
+
+			}
 			strTur = kk.key().toString();
 			//String messageType = listOfRecord.stream().filter(usrDt->usrDt.getMessageId().equalsIgnoreCase(kk.value().getMessageId())).map(p->p.getMessageType()).findFirst().orElseGet(()->"no data");
 					//.findFirst().map(p->p.getMessageId()).orElseGet(()->"");
 			//System.out
 			//System.out.println("message Type Target result ==>" +messageType);
-			listOfTitle.add(new PreparedMessage(kk.timestamp(), kk.value().getMessage(), kk.value().getUserId(), kk.value().getRecieverId(), kk.value().getChatId(), kk.value().getMessageType()));
+			//listOfTitle.add(new PreparedMessage(kk.timestamp(), kk.value().getMessage(), kk.value().getUserId(), kk.value().getRecieverId(), kk.value().getChatId(), kk.value().getMessageType(), kk.partition()));
 		}
 		List<PreparedMessage> res = listOfTitle.stream().sorted(Comparator.comparing(PreparedMessage::getTimeStamp)).collect(Collectors.toList());
+		
 		return res;
 	}
 
@@ -260,6 +270,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 				PreparedMessage chEvent = new PreparedMessage(readMsg.getUserId(),
 						readMsg.getRecieverId(), 
 						readMsg.getChatId(), "consumed");
+				
 				CreateMessageRestModel evnt = new CreateMessageRestModel( readMsg.getUserId(), readMsg.getRecieverId(), readMsg.getMessage(), readMsg.getChatId());
 //				ProducerRecord<String, PreparedMessage> recordRes = new ProducerRecord<>(env.getProperty("consumer.read.topic"),
 //						readMsg.getChatId(), chEvent);
@@ -298,6 +309,38 @@ public class ChatMessageServiceImpl implements ChatMessageService {
 //				LOGGER.info("*** Returning ProductId ****");
 
 				return chEvent;
+	}
+
+
+	@Override
+	public String removeTrigger(PreparedMessage readMesage) throws Exception {
+		// TODO Auto-generated method stub
+		LOGGER.info("chatId ==> {}", readMesage.getChatId());
+		LOGGER.info("partitiion Id ==> {}", readMesage.getChatId());
+		ProducerRecord<String, ChatAiRemoveMsgEvent> recordRes = new ProducerRecord<>(env.getProperty("consumer.create.topic"),
+				readMesage.getChatId(), null);
+		String msgId = UUID.randomUUID().toString();
+		LOGGER.info("msq Id ==> {}", msgId);
+		byte[] messageId = msgId.getBytes();
+		recordRes.headers().add("removeId", messageId);
+		//recordRes.headers().add("PartitionId", readMesage.getPartitionId().getBytes());
+		//String topic, Integer partition, K key, V data
+		ChatAiCreatedEvent upValue = new ChatAiCreatedEvent(readMesage.getChatId(), readMesage.getUserId(), readMesage.getUserId(), null, null);
+		SendResult<String, ChatAiCreatedEvent> result = kafkaTemplate.send(env.getProperty("consumer.create.topic"), readMesage.getPartitionId(), readMesage.getChatId(), upValue).get();
+		//SendResult<String, ChatAiCreatedEvent> result = kafkaTemplate.send(recordRes).get();
+		LOGGER.info("removed key get Partition ==> " + result.getRecordMetadata().partition());
+		LOGGER.info("removed key get Topic ==> " + result.getRecordMetadata().topic());
+		LOGGER.info("removed key get ==> " + result.getProducerRecord().key());
+		//LOGGER.info("Title ==> " + result.getProducerRecord().value().getMessage());
+		LOGGER.info("Topic Offset  ==> " + result.getRecordMetadata().offset());
+		LOGGER.info("*** Returning ProductId ****");
+		ProcessedEventEntity prEvt = processEventRepository.findByChatId(readMesage.getChatId());
+		if(prEvt != null) {
+		prEvt.setPartionNo(result.getRecordMetadata().partition());
+		prEvt.setOffSetNo(result.getRecordMetadata().offset());
+		processEventRepository.save(prEvt);
+		}
+		return readMesage.getChatId();
 	}
 	
 	

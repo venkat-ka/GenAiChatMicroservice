@@ -11,6 +11,7 @@ public class CreateMessageRestModel {
 	private String recieverId;
 	private String message;
 	private String chatId;
+	private String partitionId;
 	
 	
 	
@@ -46,6 +47,12 @@ public class CreateMessageRestModel {
 	}
 	public void setMessage(String message) {
 		this.message = message;
+	}
+	public String getPartitionId() {
+		return partitionId;
+	}
+	public void setPartitionId(String partitionId) {
+		this.partitionId = partitionId;
 	}
 	
 	
