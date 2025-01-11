@@ -12,17 +12,18 @@ public class CreateMessageRestModel {
 	private String message;
 	private String chatId;
 	private String partitionId;
-	
+	private Long timeStamp;
 	
 	
 	public CreateMessageRestModel() {
 	}
-	public CreateMessageRestModel(String userId, String recieverId, String message, String chatId) {
+	public CreateMessageRestModel(String userId, String recieverId, String message, String chatId, Long timeStamp) {
 		super();
 		this.userId = userId;
 		this.recieverId = recieverId;
 		this.message = message;
 		this.chatId = chatId;
+		this.timeStamp=timeStamp;
 	}
 	public CreateMessageRestModel(String userId, String recieverId, String message) {
 		super();
@@ -53,6 +54,12 @@ public class CreateMessageRestModel {
 	}
 	public void setPartitionId(String partitionId) {
 		this.partitionId = partitionId;
+	}
+	public Long getTimeStamp() {
+		return timeStamp;
+	}
+	public void setTimeStamp(Long timeStamp) {
+		this.timeStamp = timeStamp;
 	}
 	
 	
