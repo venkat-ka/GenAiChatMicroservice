@@ -18,7 +18,7 @@ const InputText = ({ onSendMessage }) => {
             onChange={(event) => setCreateMsg(event.target.value)} cols="30" rows="5">
 
         </textarea>
-        <button type="button" onClick={() => onSubmit()}>Send</button>
+        <butto className='cursor' type="button" onClick={() => onSubmit()}>Send</button>
     </div>
 }
 

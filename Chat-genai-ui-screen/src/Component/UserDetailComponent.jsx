@@ -1,11 +1,12 @@
 import { useContext, useEffect, useState } from 'react'
 import useGetUserList from '../service/AuthService.ts'
 import AuthContext from '../ContextData/AuthContext.ts';
-const UserDetailComponent = () => {
+const UserDetailComponent = (props) => {
     const { isLoggedIn, token } = useContext(AuthContext)
     const { getUserList, createUserApi } = useGetUserList();
     const [userList, setUserList] = useState();
     const [userCreate, setUserCreate] = useState();
+    const [isLoading, setIsLoading] = useState();
 
     const getAllUser = () => {
         getUserList('/users-ws/users/getAll').
@@ -70,14 +71,22 @@ const UserDetailComponent = () => {
 
     const callCreateApi = () => {
         setUserList([])
+        setIsLoading(true)
         createUserApi('/users-ws/users', userCreate).
             then((res) => {
                 alert("User registered successfully")
+                setUserCreate({
+                    firstName: "",
+                    lastName: "",
+                    email: "",
+                    password: ""
+                })
+                props.selectTab(0)
                 //setTimeout(() => { getAllUser() }, 1000)
-
+                setIsLoading(false)
             }).catch(err => {
                 console.error(err)
-
+                setIsLoading(false)
                 if (err.response.status == 500) {
                     alert("email already exists")
                 }
@@ -96,11 +105,15 @@ const UserDetailComponent = () => {
         }
     }
     const addUser = () => {
-        return <button type="button" className="btn pd10 mr15px" onClick={() => saveUser()}>Create User </button>
+        return <div className='w100, clearBith'>
+            <button type="button" className="cursor btn pd10 mr15px" onClick={() => saveUser()}>Create User </button></div>
     }
     return <>
-        {createUser()}
-        {addUser()}
+        <div style={{ 'opacity': isLoading ? '0.5' : '1' }}>
+            {createUser()}
+            {addUser()}
+        </div>
+        {isLoading && (<div className="loader"></div>)}
     </>
 
 }

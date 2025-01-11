@@ -2,13 +2,14 @@ import axios from "axios";
 import { useContext } from 'react'
 import AuthContext from '../ContextData/AuthContext.ts';
 
-
+// https://dev.to/subhransu/realtime-chat-app-using-kafka-springboot-reactjs-and-websockets-lc
 const baseUsr: string = 'http://localhost:8082';
 export const getUserLogin = (endpoint: string, reqData: any) => {
    //  reqData = {
    //     a: 10,
    //     b: 20,
    //   };
+
    const headerData = {
       headers: {
          Accept: "application/json",
@@ -56,6 +57,33 @@ function useGetUserList() {
 
 
 
+   const postUserAuth = (endPoint, reqData) => {
+      let getToken = null;
+      if (isLoggedIn) {
+         getToken = isLoggedIn?.token;
+      } else {
+         if (localStorage.getItem('jwt') != null) {
+            let parserData = JSON.parse(localStorage.getItem('jwt'));
+
+            getToken = parserData.headers['access-token']
+         }
+      }
+      const headerUData = {
+         headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "POST, PUT, PATCH, GET, DELETE, OPTIONS",
+            "Access-Control-Allow-Headers": "Origin, X-Api-Key, X-Requested-With, Content-Type, Accept, Authorization, Access-Token, Uid",
+            "Access-Control-Expose-Headers": "*",
+            "withCredentials": true,
+            "Authorization": "Bearer " + getToken
+         },
+      }
+
+      return axios.post(baseUsr + endPoint, reqData, headerUData);
+   }
+
 
    const getUserList = (endpoint: string) => {
 
@@ -95,7 +123,7 @@ function useGetUserList() {
       return axios.get(baseUsr + endpoint, headerUData);
 
    }
-   return { getUserList, createUserApi }
+   return { getUserList, createUserApi, postUserAuth }
 }
 
 export default useGetUserList;

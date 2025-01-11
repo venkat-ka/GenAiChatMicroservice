@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { UserManagment } from './Component';
+
 
 import './App.css';
-import RouterEntry from './RouterEntry.ts';
+import RouterEntry from './RouterEntry.tsx';
 
 
 function App() {
 
 
-  return (<div className="App"><RouterEntry /></div>)
+  return (<div className="App"> <RouterEntry /></div>)
 
 }
 

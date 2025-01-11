@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import useGetUserList from '../service/AuthService.ts'
 import AuthContext from '../ContextData/AuthContext.ts';
-import HeaderComponent from './Header/HeaderComponents.js'
+import HeaderComponent from './Header/HeaderComponents.tsx'
 
 function ProfileComponents() {
 

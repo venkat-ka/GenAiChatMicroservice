@@ -13,8 +13,8 @@ export function ConnectionManager() {
 
     return (
         <>
-            <button onClick={() => connect()}>Connect</button>
-            <button onClick={() => disconnect()}>Disconnect</button>
+            <button className='cursor' onClick={() => connect()}>Connect</button>
+            <button className='cursor' onClick={() => disconnect()}>Disconnect</button>
         </>
     );
 }

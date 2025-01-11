@@ -18,6 +18,17 @@ code {
   text-align: center;
   width: 600px;
   padding: 3px;
+  display: inline-block;
+}
+
+.userMsg {
+  margin: 2px auto 30px;
+  height: 150px;
+  text-align: center;
+  width: 90%;
+  padding: 30px 0px 3px;
+  display: inline-block;
+  border-top: 2px solid #04282B;
 }
 
 .fl {
