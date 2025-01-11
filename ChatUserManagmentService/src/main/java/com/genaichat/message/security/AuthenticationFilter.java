@@ -118,9 +118,11 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 		UserEntity userEntity = userRepo.findByUserId(userDetails.getUserId());
 		if(userEntity != null) {
 		userEntity.setLoginStatus("y");
+		userDetails.setLoginStatus("y");
 		userEntity.setToken(token);
 		userRepo.save(userEntity);
 		}
+		userDetails.setLoginStatus("y");
 		template.convertAndSend("/topic/group", userDetails);
 		
 	}

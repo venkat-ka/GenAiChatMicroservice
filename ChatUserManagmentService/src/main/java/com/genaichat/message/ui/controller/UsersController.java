@@ -112,10 +112,10 @@ public class UsersController {
 	}
 	
 	@PostMapping(value = "/signout")
-	public String logout(@RequestBody String userId){
-		String usrLogOutId = usersService.userLogout(userId);
+	public String logout(@RequestBody UserResponseModel userId){
+		String usrLogOutId = usersService.userLogout(userId.getUserId());
 		
-		return userId;
+		return usrLogOutId;
 	}
 	
 	

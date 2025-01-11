@@ -3,6 +3,7 @@ package com.genaichat.message.service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -22,6 +23,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.genaichat.message.data.AuthorityEntity;
 import com.genaichat.message.data.AutorityRepository;
 import com.genaichat.message.data.RoleRepository;
@@ -167,8 +170,17 @@ public class UserServiceImpl implements UsersService {
 			UserDto mapUserDt = new ModelMapper().map(user, UserDto.class);
 			if (mapUserDt.getToken() != null) {
 
-				JwtClaimsParser jwtClaimsParser = new JwtClaimsParser(mapUserDt.getToken(), tokenSecret);
-				String jwtUserId = jwtClaimsParser.getJwtSubject();
+				//Optional<JwtClaimsParser> jwtClaimsParser = Optional.ofNullable(new JwtClaimsParser(mapUserDt.getToken(), tokenSecret));
+				//if(jwtClaimsParser.ifPresent(null))
+				//jwtClaimsParser.ifPresent(JwtClaimsParser::getJwtSubject);
+				DecodedJWT decodedJWT = JWT.decode(mapUserDt.getToken());
+				String jwtUserId = null;
+				
+				
+				if(!isJWTExpired(decodedJWT)) {
+					jwtUserId = decodedJWT.getSubject();
+				}
+				
 				UserEntity indUser = usersRepository.findByUserId(mapUserDt.getUserId());
 				if (indUser != null) {
 					if (jwtUserId == null) {
@@ -201,7 +213,10 @@ public class UserServiceImpl implements UsersService {
 
 		return authority;
 	}
-
+	boolean isJWTExpired(DecodedJWT decodedJWT) {
+	    Date expiresAt = decodedJWT.getExpiresAt();
+	    return expiresAt.before(new Date());
+	}
 	// @Transactional
 	private RoleEntity createRole(String name, Collection<AuthorityEntity> authorities) {
 
@@ -220,11 +235,16 @@ public class UserServiceImpl implements UsersService {
 	public String userLogout(String userId) {
 		// TODO Auto-generated method stub
 		UserEntity indUser = usersRepository.findByUserId(userId);
+		ModelMapper modelMapper = new ModelMapper();
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+
 		if (indUser != null) {
 			
 				LOGGER.info("Not a valid token found");
 				indUser.setLoginStatus("n");
 				usersRepository.save(indUser);
+				UserDto returnValue = modelMapper.map(indUser, UserDto.class);
+				template.convertAndSend("/topic/group", returnValue);
 			} 
 		return userId;
 	}
