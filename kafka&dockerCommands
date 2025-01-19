@@ -21,3 +21,6 @@ docker run -p 8082:8082 --env HOSTNAME=host.docker.internal venkateshkrish/chata
 Chat User Managment
 docker build -t venkateshkrish/chatusermanagment:0.0.1.RELEASE .
 docker run --env HOSTNAME=host.docker.internal venkateshkrish/chatusermanagment:0.0.1.RELEASE
+
+Chat UI
+docker build -t venkateshkrish/chatui:0.0.1.RELEASE .
