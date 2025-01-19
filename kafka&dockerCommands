@@ -17,3 +17,7 @@ Chat Registry cmmand
 
 Chat Api gateway
 docker run -p 8082:8082 --env HOSTNAME=host.docker.internal venkateshkrish/chatapigateway:0.0.1.RELEASE
+
+Chat User Managment
+docker build -t venkateshkrish/chatusermanagment:0.0.1.RELEASE .
+docker run --env HOSTNAME=host.docker.internal venkateshkrish/chatusermanagment:0.0.1.RELEASE
