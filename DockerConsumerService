@@ -1,0 +1,17 @@
+FROM maven:3.8-openjdk-17 AS stage1
+RUN mkdir /home/chatconsumer
+RUN mkdir /home/chatconsumer/kafka
+WORKDIR /home/chatconsumer/
+RUN mkdir /localRepo/
+COPY sec-docker.xml $MAVEN_HOME/ref/
+COPY ./ChatConsumerMessageService/  /home/chatconsumer/
+COPY ./ChatKafkaEvent/  /home/chatconsumer/kafka/
+COPY ./localRepo/  /localRepo/
+RUN mvn  install:install-file -f /home/chatconsumer/pom.xml -DartifactId=ChatKafkaEvent -DgroupId=com.libmodel -Dpackaging=jar -Dversion=0.0.1-SNAPSHOT  -DlocalRepo=$MAVEN_HOME/ref/repository/  -Dfile=/localRepo/com/libmodel/ChatKafkaEvent/0.0.1-SNAPSHOT/ChatKafkaEvent-0.0.1-SNAPSHOT.jar package 
+
+
+FROM openjdk:17-jdk-slim
+#EXPOSE 8082
+
+COPY --from=stage1 /home/chatconsumer/target/*.jar chatconsumer.jar
+ENTRYPOINT ["sh", "-c", "java -jar /chatconsumer.jar"]
