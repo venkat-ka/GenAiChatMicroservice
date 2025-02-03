@@ -7,3 +7,20 @@ kafka-topics.sh --list --bootstrap-server localhost:9094
 
 2024-11-09 08:41:41,513] ERROR Cannot invoke "java.nio.channels.ServerSocketChannel.close()" because the return value of "kafka.network.Acceptor.serverChannel()" is null (kafka.network.DataPlaneAcceptor)
 kafka-1-1  | java.lang.NullPointerException: Cannot invoke "java.nio.channels.ServerSocketChannel.close()" because the return value of "kafka.network.Acceptor.serverChannel()" is null
+
+
+Docker file commands
+
+Chat Registry cmmand
+ docker build -t venkateshkrish/chatregistry:0.0.1.RELEASE .
+ docker run -p 8010:8010 venkateshkrish/chatregistry:0.0.1.RELEASE
+
+Chat Api gateway
+docker run -p 8082:8082 --env HOSTNAME=host.docker.internal venkateshkrish/chatapigateway:0.0.1.RELEASE
+
+Chat User Managment
+docker build -t venkateshkrish/chatusermanagment:0.0.1.RELEASE .
+docker run --env HOSTNAME=host.docker.internal venkateshkrish/chatusermanagment:0.0.1.RELEASE
+
+Chat UI
+docker build -t venkateshkrish/chatui:0.0.1.RELEASE .
