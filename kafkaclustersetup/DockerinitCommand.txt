@@ -2,6 +2,10 @@ docker-compose --file docker-compose.yml --env-file environment.env up
 
 Dockerfile build
  docker build -t venkateshkrish/chatdemoservice:0.0.1.RELEASE .
+docker build -t venkateshkrish/chatapigatewayservice:0.0.1.RELEASE .
+
+docker build -t venkateshkrish/chatregistry:0.0.1.RELEASE 
+
 
 docker build -f DockerConsumerService -t venkateshkrish/chatconsumermessageservice:0.0.2.RELEASE .
 
