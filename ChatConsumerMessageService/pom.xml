@@ -10,7 +10,7 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.genaichat</groupId>
-	<artifactId>ChatConsumerMessageService</artifactId>
+	<artifactId>chatconsumermessageservice</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>ChatMessageConsumerService</name>
 	<description>Kafka Consumer Service will comsume from chatProducer service
@@ -77,14 +77,14 @@
 			<scope>runtime</scope>
 		</dependency>-->
 		<dependency>
-			<groupId>com.genaichat</groupId>
-			<artifactId>ChatAiKafkaEvent</artifactId>
-			<version>0.0.2-SNAPSHOT</version>
+			<groupId>com.libmodel</groupId>
+			<artifactId>ChatKafkaEvent</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-websocket</artifactId>
-        </dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
@@ -109,6 +109,11 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<image>
+						<name>
+							venkateshkrish/${project.name}:${project.version}</name>
+					</image>
+					<pullPolicy>IF_NOT_PRESENT</pullPolicy>
 					<excludes>
 						<exclude>
 							<groupId>org.projectlombok</groupId>
