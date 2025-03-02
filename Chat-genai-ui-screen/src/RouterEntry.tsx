@@ -100,11 +100,11 @@ const RouterEntry = () => {
         }
 
         { // websockim
-            !isLoggedIn?.token || localStorage.getItem('jwt') ?
+            !isLoggedIn?.token || !localStorage.getItem('jwt') ?
                 <SockJsClient
                     url={USERSOCKET_URL}
                     topics={['/topic/group']}
-                    onConnect={onUserConnected}
+                    onConnect={() => onUserConnected}
                     onDisconnect={console.log("User Disconnected!")}
                     onMessage={msg => onUserMessageReceived(msg)}
                     debug={true}

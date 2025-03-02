@@ -92,7 +92,12 @@ const ReadUserMessage = (props) => {
                 // recieving message
                 console.log("c->")
 
-                setListOfMsg([...listOfMsg, props.liveChat])
+                if (listOfMsg.length > 0) {
+                    setListOfMsg([...listOfMsg, props.liveChat])
+                } else {
+                    setListOfMsg([props.liveChat])
+                }
+
 
                 callConsumedMsg()
             }
@@ -128,7 +133,12 @@ const ReadUserMessage = (props) => {
                 setListOfMsg(mapMsg)
 
             } else {
-                setListOfMsg([...listOfMsg, props.liveChat])
+                if (listOfMsg.length > 0) {
+                    setListOfMsg([...listOfMsg, props.liveChat])
+                } else {
+                    setListOfMsg([props.liveChat])
+                }
+                //setListOfMsg([...listOfMsg, props.liveChat])
             }
             //  listOfMsg.map((p) => p.chatId == props.liveChat.chatId ? p.messageType = props.liveChat.messageType : null)
             // debugger
@@ -200,6 +210,11 @@ const ReadUserMessage = (props) => {
                         sendMsg['loadStatus'] = "load";
                         setListOfMsg([...listOfMsg, sendMsg])
                         // setLiveChatId()
+                    } else {
+
+                        sendMsg['chatId'] = res.data;
+                        sendMsg['loadStatus'] = "load";
+                        setListOfMsg([sendMsg])
                     }
                     //setTimeout(() => { getAllUser() }, 1000)
                     setIsLoading(false)

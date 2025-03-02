@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.genaichat.chatevent.ChatAiCreatedEvent;
+import com.libmodel.modelReq.ChatAiCreatedEvent;
+
 
 @RestController
 @RequestMapping("/ws-chat")

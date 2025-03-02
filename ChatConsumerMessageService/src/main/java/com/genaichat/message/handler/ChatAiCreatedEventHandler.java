@@ -20,13 +20,11 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
-import com.genaichat.chatevent.ChatAiCreatedEvent;
-import com.genaichat.chatevent.ChatAiRemoveMsgEvent;
 import com.genaichat.message.error.NotRetrayableException;
 import com.genaichat.message.error.RetryableException;
 import com.genaichat.message.io.ProcessedEventRepository;
-
-
+import com.libmodel.modelReq.ChatAiCreatedEvent;
+import com.libmodel.modelReq.ChatAiRemoveMsgEvent;
 import com.genaichat.message.io.ProcessedEventEntity;
 
 
@@ -74,7 +72,7 @@ public class ChatAiCreatedEventHandler {
 		LOGGER.info(" with message key: "
 				+ messageKey);
 		
-		String requestUrl = "http://localhost:8087/response/200";
+		String requestUrl = "http://localhost:8089/response/200";
 
 		try {
 			ResponseEntity<String> response = restTemplate.exchange(requestUrl, HttpMethod.GET, null, String.class);

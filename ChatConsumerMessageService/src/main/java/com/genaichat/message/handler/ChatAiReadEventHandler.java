@@ -14,10 +14,10 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
-import com.genaichat.chatevent.ChatAiCreatedEvent;
-import com.genaichat.chatevent.PreparedMessage;
+
 import com.genaichat.message.io.ProcessedEventEntity;
 import com.genaichat.message.io.ProcessedEventRepository;
+import com.libmodel.modelReq.PreparedMessage;
 
 @Component
 @KafkaListener(topics = "genchat-read-events-topic", groupId = "genchat-read-events")

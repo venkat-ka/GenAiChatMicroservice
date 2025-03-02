@@ -54,11 +54,7 @@ const HeaderComponent = ({ isPrf }) => {
 
         }
     }
-    // let gh = JSON.parse(localStorage.getItem('logData'));
-    //console.log(prNm, 'prNm')
-    // console.log(localStorage.getItem('logData'))
-    // console.log(gh.data.firstName)
-    console.log(logout, 'logout')
+
     let logOutCss = logout ? 'blur' : ''
     return <div className="header pd10">
         <span className="f-left">AI CHAT</span>

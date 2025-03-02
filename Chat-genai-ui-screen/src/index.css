@@ -32,7 +32,7 @@ code {
 }
 
 .fl {
-  width: 300px;
+  width: 45%;
   float: left;
   border-right: 3px solid grey;
 }
@@ -48,4 +48,23 @@ code {
 
 .clr {
   clear: both;
+}
+
+@media screen and (max-width: 840px) {
+  .userdtls {
+    width: 540px;
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .userdtls {
+    width: 400px;
+  }
+
+  .fl,
+  .fr {
+    width: 100%;
+    clear: both;
+    border: none;
+  }
 }

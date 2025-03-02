@@ -19,9 +19,32 @@ function UserList(props) {
         // setRcvrMsg(props.liveChat)
     }, [props.liveChat])
     useEffect(() => {
-        setLiveLoginStatus(props.liveloginStatus)
-        console.log('ren', props.liveloginStatus)
-    }, [props.liveloginStatus?.liveUserId, props.liveloginStatus?.liveloginStatus])
+        // setLiveLoginStatus(props.liveLoginStatus)
+        if (props.liveLoginStatus != null) {
+            let addObj = {
+                chatId: null,
+                userId: null,
+                recieverId: props.liveLoginStatus.liveUserId,
+                messageId: null,
+                partitionId: null,
+                message: "",
+                messageType: null,
+                loadStatus: null,
+            }
+            if (userList && userList.length > 0) {
+                getAllUser()
+                // setUserList([...userList, addObj])
+            } else {
+                getAllUser()
+                // setUserList(addObj);
+            }
+
+        }
+        // setTimeout(() => {
+        //     setLiveLoginStatus();
+        // }, 2000);
+        console.log('liveLoginStatus l', props.liveLoginStatus)
+    }, [props.liveLoginStatus?.liveUserId, props.liveloginStatus?.liveloginStatus])
 
     useEffect(() => {
         console.log(localStorage.getItem('jwt'))
@@ -30,17 +53,7 @@ function UserList(props) {
 
             getAllUser()
 
-            // getUserList('/role-ws/apis/rolebyuserid/c1d6d047-09f9-4a52-af10-0e5a0c1dcfa3').
-            //     then((res) => {
-            //         console.log("ROle by user");
-            //         console.log(res);
 
-            //         console.log("ROle by user End")
-
-            //     }).catch(err => {
-            //         console.log(err)
-
-            //     })
 
         }
         //console.log(dc)
@@ -61,8 +74,7 @@ function UserList(props) {
 
     const useerlist = () => userList && userList.map((uDt, index) => {
         // debugger
-        console.log(props.liveLoginStatus?.liveUserId)
-        console.log(props.liveLoginStatus?.liveloginStatus)
+
         let selectClass = recvrId == uDt.userId ? "selec" : ''
         return uDt.userId != localStorage.getItem('uid') &&
             <div key={index} className='mg15px i-listItem '>
