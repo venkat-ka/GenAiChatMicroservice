@@ -24,3 +24,23 @@ docker run --env HOSTNAME=host.docker.internal venkateshkrish/chatusermanagment:
 
 Chat UI
 docker build -t venkateshkrish/chatui:0.0.1.RELEASE .
+
+
+
+
+Image in docker hub
+
+venkateshkrish/chatconsumermessageservice:0.0.2.RELEASE
+
+venkateshkrish/chatusermanagment:0.0.2.RELEASE
+
+venkateshkrish/chatproducermessageservice:0.0.2.RELEASE
+
+venkateshkrish/chatdemoservice:0.0.2.RELEASE
+
+venkateshkrish/chat-ui:0.0.2.RELEASE
+
+venkateshkrish/chatregistry:0.0.2.RELEASE
+
+ venkateshkrish/chatapigatewayservice:0.0.2.RELEASE
+
