@@ -1,1 +1,106 @@
+version: "3.8"
+
+services:
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    restart: "always"
+    
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka-1:9090
+      KAFKA_CLUSTERS_1_NAME: flocal
+      KAFKA_CLUSTERS_1_BOOTSTRAPSERVERS: kafka-2:9090
+      KAFKA_CLUSTERS_2_NAME: slocal
+      KAFKA_CLUSTERS_2_BOOTSTRAPSERVERS: kafka-3:9090
+
+  chat-registry:
+    image: venkateshkrish/chatregistry:0.0.1.RELEASE
+    container_name: chat-registry
+    restart: "always"
+   
+    ports:
+      - "8010:8010"
+
+  chat-apigateway:
+    image: venkateshkrish/chatapigatewayservice:0.0.1.RELEASE
+    container_name: chat-apigateway
+    restart: "always"
+    environment:
+      HOSTNAME: "host.docker.internal"
+    depends_on:
+      - chat-registry
+    ports:
+      - "8082:8082"    
+  
+  chat-consumer:
+    image: venkateshkrish/chatconsumermessageservice:0.0.2.RELEASE
+    container_name: chat-consumer
+    restart: "always"
+    environment:
+      MYSQL_HOST: "host.docker.internal"
+      HOSTNAME: "host.docker.internal"
+      KAFKAIP: "localhost"
+      MYIP: "172.00.0.00/24"
+    depends_on:
+      - chat-registry
+      - chat-producer
+    networks:
+      - kf-network
+
+  chat-demo:
+    image: venkateshkrish/chatdemoservice:0.0.1.RELEASE
+    container_name: chat-demo
+    restart: "always"
+    environment:
+      HOSTNAME: "host.docker.internal"
+    depends_on:
+      - chat-registry
+    ports:
+      - "8089:8089"   
+
+
+  chat-genui:
+    image: venkateshkrish/chat-ui:0.0.1.RELEASE
+    container_name: chat-ui
+    restart: "always"
+    environment:
+      HOSTNAME: "host.docker.internal"
+    depends_on:
+      - chat-registry
+    ports:
+      - "3000:3000"
+
+  chat-usermanagment:
+    image: venkateshkrish/chatusermanagment:0.0.1.RELEASE
+    container_name: chat-usermanagment
+    restart: "always"
+    environment:
+      MYSQL_HOST: "host.docker.internal"
+      HOSTNAME: "host.docker.internal"
+      MYIP: "172.19.0.8/24"
+    depends_on:
+      - chat-registry
+
+
+  chat-producer:
+    image: venkateshkrish/chatproducermessageservice:0.0.2.RELEASE
+    container_name: chat-producer
+    restart: "always"
+    environment:
+      MYSQL_HOST: "host.docker.internal"
+      HOSTNAME: "host.docker.internal"
+      MYIP: "172.19.0.00/24"
+      #KAFKAIP: "localhost"
+      KAFKAIP: "localhost"
+    depends_on:
+      - chat-registry
+
+
+networks:
+  db-network:
+  kf-network:  
 
