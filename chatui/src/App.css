@@ -1,0 +1,282 @@
+.App {
+  text-align: center;
+}
+
+div.onClick {
+  cursor: pointer;
+}
+
+.cursor {
+  cursor: pointer;
+}
+
+.uCase {
+  text-transform: capitalize;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+/* CCFFCC light green */
+/* 003300 dark green font color CCFFCC*/
+/* border 04282B */
+.pd10 {
+  padding: 10px;
+}
+
+.w100 {
+  width: 100px;
+}
+
+.container {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.header {
+  background-color: #CCFFCC;
+  border: 2px solid #04282B;
+  font-weight: bold;
+}
+
+.w30per {
+  width: 30%;
+}
+
+.w70per {
+  width: 70%;
+}
+
+.boxBg {
+  background-color: #99FF99;
+  border-radius: 3px;
+  border: 1px solid #003300;
+  padding: 3.4px;
+}
+
+.createBoxBtn {
+  border-radius: 0px 200px 200px 0px;
+  margin-top: 20px;
+}
+
+.loader {
+  position: fixed;
+
+  left: 50%;
+  top: 35%;
+  z-index: 1000;
+  height: 31px;
+  width: 31px;
+}
+
+.loader::after {
+  content: "Loading...";
+  position: absolute;
+  font-weight: 600px;
+}
+
+.href {
+  cursor: pointer;
+}
+
+.senderMsg {
+  border-radius: 20px;
+  padding: 15px;
+  background-color: #D5E8D4;
+  border: 2px solid #003300;
+  color: #000;
+  width: 50%;
+  float: left;
+  margin: 15px;
+}
+
+.chatBox {
+  width: 80%;
+  margin: 0px auto;
+  background-color: #CCFFCC;
+  border: 2px solid #04282B;
+  /* display: inline-block;
+  padding: 10px; */
+}
+
+.mg11tp {
+  margin-top: 11px;
+}
+
+.t-left {
+  text-align: left;
+}
+
+.slst {
+  background: #D5E8D4
+}
+
+.tabs {}
+
+.tab-box {
+  margin: 15px auto 0px;
+  width: 400px;
+  font-size: 12px;
+}
+
+.chat-tab {
+  padding: 10px 25px;
+
+  border: 1px solid #04282B;
+  background-color: #CCFFCC;
+  border-bottom: 0;
+}
+
+.tab-box .active,
+.btn {
+  background-color: #003300;
+  color: #CCFFCC;
+
+}
+
+.btn {
+  border: none;
+
+}
+
+.mg15px {
+  margin: 15px auto;
+}
+
+.ml15px {
+  margin-left: 15px;
+}
+
+.w15px {
+  width: 15px;
+}
+
+.blur {
+  opacity: 0.5;
+}
+
+.selec {
+  background: #99FF99
+}
+
+.w25per {
+  width: 25%;
+}
+
+.mr15px {
+  margin-right: 15px;
+}
+
+.mt15px {
+  margin-top: 15px;
+}
+
+.mb15px {
+  margin-bottom: 15px;
+}
+
+.f-left {
+  float: left;
+}
+
+.f-right {
+  float: right;
+}
+
+.page {
+  width: 80%;
+  margin: 0 auto;
+}
+
+.clearBoth {
+  clear: both;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.rcvr {
+  background-color: #EAFFE9;
+}
+
+.i-listItem {
+
+  display: block;
+
+  text-align: center;
+}
+
+.historyMsg {
+  border-top: 2px solid #04282B;
+  border-top-left-radius: 1em;
+  border-top-right-radius: 1em;
+  padding-top: 2em
+}
+
+.l_hmsg {
+  max-height: 350px;
+  min-height: 70px;
+  overflow-x: auto;
+  flex-direction: column;
+  display: flex;
+}
+
+.listItem {
+
+  display: block;
+  width: 50%;
+  text-align: center;
+}
+
+.w290px {
+  width: 290px;
+}
+
+.w280px {
+  width: 280px;
+}
+
+.wrap {
+  word-wrap: break-word;
+}
+
+.delete-icon {
+  font-size: 24px;
+  cursor: pointer;
+  color: #003300;
+  /* Red color */
+}
+
+.delete-icon::before {
+  content: "\2716";
+  /* Unicode for a cross mark */
+}
