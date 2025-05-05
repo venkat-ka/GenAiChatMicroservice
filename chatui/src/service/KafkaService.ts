@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useContext } from 'react'
 import AuthContext from '../ContextData/AuthContext.ts';
-const baseUsr: string = 'http://localhost:8082';
+const baseUsr: string = `http://${process.env.REACT_APP_API_URL}:8082`;
 function useKafkaApi() {
    const { isLoggedIn } = useContext(AuthContext);
    const callKafkaApi = (endpoint: string, reqData) => {

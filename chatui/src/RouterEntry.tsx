@@ -20,8 +20,8 @@ const RouterEntry = () => {
     const { isLoggedIn } = useContext(AuthContext);
     const [liveUserId, setLiveUserId] = useState();
     const [liveLoginStatus, setLiveLoginStatus] = useState();
-    const SOCKET_URL = 'http://localhost:8082/kafka-con/ws-chat';
-    const USERSOCKET_URL = 'http://localhost:8082/users-ws/ws-chat';
+    const SOCKET_URL = `http://${process.env.REACT_APP_API_URL}:8082/kafka-con/ws-chat`;
+    const USERSOCKET_URL = `http://${process.env.REACT_APP_API_URL}:8082/users-ws/ws-chat`;
     let onConnected = () => {
         console.log("Connected!!")
     }

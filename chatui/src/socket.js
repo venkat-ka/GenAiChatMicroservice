@@ -6,7 +6,7 @@ import { io } from "socket.io-client";
 //     }
 // });
 
-export const soket = io.connect('localhost:8082', {
+export const soket = io.connect(`${process.env.REACT_APP_API_URL}:8082`, {
     'path': '/kafka-prod/chat/ws-chat',
     withCredentials: true,
     extraHeaders: {
