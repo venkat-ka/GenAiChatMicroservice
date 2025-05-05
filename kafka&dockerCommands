@@ -44,3 +44,6 @@ venkateshkrish/chatregistry:0.0.2.RELEASE
 
  venkateshkrish/chatapigatewayservice:0.0.2.RELEASE
 
+docker run -p 3000:3000 --env REACT_APP_API_URL=host.docker.internal --env PORT_IP=3000  venkateshkrish/chat-ui:0.0.3.RELEASE
+
+
