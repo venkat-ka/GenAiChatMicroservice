@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-
+import org.springframework.core.env.Environment;
 import com.genaichat.message.error.NotRetrayableException;
 import com.genaichat.message.error.RetryableException;
 import com.genaichat.message.io.ProcessedEventRepository;
@@ -37,6 +37,9 @@ public class ChatAiCreatedEventHandler {
 	
 	@Autowired
     SimpMessagingTemplate template;
+
+	@Autowired
+	Environment env;
 
 	private ProcessedEventRepository processEventRepository;
 
@@ -72,7 +75,7 @@ public class ChatAiCreatedEventHandler {
 		LOGGER.info(" with message key: "
 				+ messageKey);
 		
-		String requestUrl = "http://localhost:8089/response/200";
+		String requestUrl = env.getProperty("demo.service.url200");
 
 		try {
 			ResponseEntity<String> response = restTemplate.exchange(requestUrl, HttpMethod.GET, null, String.class);

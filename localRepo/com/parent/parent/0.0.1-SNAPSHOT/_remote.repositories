@@ -1,0 +1,4 @@
+#NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
+#Sat Feb 01 16:58:42 IST 2025
+parent-0.0.1-SNAPSHOT.jar>=
+parent-0.0.1-SNAPSHOT.pom>=
